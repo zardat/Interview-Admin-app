@@ -29,56 +29,53 @@ class EventDataSource extends CalendarDataSource{
 
 
 
-class ViewInterview extends StatelessWidget {
-  final Event event;
+// class ViewInterview extends StatelessWidget {
+//   final Event event;
+//
+//   const ViewInterview({
+//     Key? key,required this.event
+// });
+//
+//   @override
+//   Widget build(BuildContext context) => Scaffold(
+//     appBar: AppBar(
+//       leading: CloseButton(),
+//       actions: InterviewWidget(context,event),
+//     ),
+//     body: ListView(
+//       padding: EdgeInsets.all(30),
+//       children: <Widget>[
+//         buildDateTime(event),
+//         SizedBox(height: 30),
+//         Text(
+//           event.participant,
+//           style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 30),
+//       ],
+//     ),
+//   );
+//
+//   Widget buildDateTime(Event event){
+//     return Column(
+//        children: [
+//          buildDate('From',event.start),
+//          buildDate('End',event.end)
+//        ],
+//     );
+//   }
+//
+//
+//   Widget DeletingInterview() => IconButton(
+//       icon: Icon(Icons.delete),
+//       onPressed:() {
+//         final provider = Provider.of<ParticipantProvider>(context,listen: true);
+//         provider.deleteEvent(event);
+//       },
+//
+//   );
 
-  const ViewInterview({
-    Key? key,required this.event
-});
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      leading: CloseButton(),
-      actions: buildViewingInterview(context,event),
-    ),
-    body: ListView(
-      padding: EdgeInsets.all(30),
-      children: <Widget>[
-        buildDateTime(event),
-        SizedBox(height: 30),
-        Text(
-          event.participant,
-          style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 30),
-      ],
-    ),
-  );
-
-  Widget buildDateTime(Event event){
-    return Column(
-       children: [
-         buildDate('From',event.start),
-         buildDate('End',event.end)
-       ],
-    );
-  }
-
-
-  Widget DeletingInterview() => IconButton(
-      icon: Icon(Icons.delete),
-      onPressed:() {
-        final provider = Provider.of<ParticipantProvider>(context,listen: true);
-        provider.deleteEvent(event);
-      },
-
-  );
-
-}
-
-
-
+// }
 
 
 class InterviewWidget extends StatefulWidget {
@@ -90,7 +87,7 @@ class _InterviewState extends State<InterviewWidget>{
   @override
   Widget build(BuildContext context){
     final provider = Provider.of<ParticipantProvider>(context);
-    final selectedEvents = provider.eventsOfSelectedDate;
+    final selectedEvents = provider.eventOfSelectedDate;
 
     if(selectedEvents.isEmpty){
       return Center(
@@ -103,48 +100,48 @@ class _InterviewState extends State<InterviewWidget>{
 
     return SfCalendarTheme(
         data: SfCalendarThemeData(
-          timeTextStyle: TextStyle(fontSize: 18,color: Colors.black)
-        ),
-        child: SfCalendar(
-          view: CalendarView.timelineDay,
-          dataSource: EventDataSource(provider.events),
-          initialDisplayDate: provider.selectedDate,
-          appointmentBuilder: appointmentBuilder,
-          todayHighlightColor: Colors.black,
-          onTap: (details){
-            if(details.appointments == null) return;
-            final event = details.appointments!.first;
-
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ViewInterview(event: event),));
-          },
-        ));
-  }
-
-  Widget appointmentBuilder(
-      BuildContext context,
-      CalendarAppointmentDetails details){
-
-    final event = details.appointments.first;
-    return Container(
-      decoration: BoxDecoration(
-        color: event.backgroundColor.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      width: details.bounds.width,
-      height: details.bounds.height,
-      child: Text(
-        event.title,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color:Colors.black,
-          fontSize: 18,
-        ),
-      ) ,
+          timeTextStyle: TextStyle(fontSize: 18,color: Colors.black),),
+          child: SfCalendar(
+            view: CalendarView.timelineDay,
+            dataSource: EventDataSource(provider.events),
+            initialDisplayDate: provider.selectedDate,
+            // appointmentBuilder: appointmentBuilder,
+            todayHighlightColor: Colors.black,
+            // onTap: (details) {
+            //   if (details.appointments == null) return;
+            //   final event = details.appointments!.first;
+            //
+            //   Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (context) => ViewInterview(event: event),));
+            // }
+         )
     );
-
   }
+
+  // Widget appointmentBuilder(
+  //     BuildContext context,
+  //     CalendarAppointmentDetails details){
+  //
+  //   final event = details.appointments.first;
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: event.backgroundColor.withOpacity(0.4),
+  //       borderRadius: BorderRadius.circular(14),
+  //     ),
+  //     width: details.bounds.width,
+  //     height: details.bounds.height,
+  //     child: Text(
+  //       event.title,
+  //       maxLines: 3,
+  //       overflow: TextOverflow.ellipsis,
+  //       style: TextStyle(
+  //         color:Colors.black,
+  //         fontSize: 18,
+  //       ),
+  //     ) ,
+  //   );
+  //
+  // }
 }
 
 
@@ -165,7 +162,6 @@ class CalenderWidget extends StatelessWidget {
         provider.setDate(details.date!);
         showModalBottomSheet(context: context,
             builder: (context) => InterviewWidget());
-
       },
     );
   }

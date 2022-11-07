@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+// import 'dart:ffi';
 
 class Event{
 
@@ -32,6 +31,7 @@ class ParticipantProvider extends ChangeNotifier{
   DateTime _selectedDate = DateTime.now();
   DateTime get selectedDate => _selectedDate;
   void setDate(DateTime date) => _selectedDate = date;
+  List<Event> get eventOfSelectedDate =>_events;
 
   void NewParticipant(Event event){
     _events.add(event);
@@ -43,8 +43,9 @@ class ParticipantProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  List<Event> eventOfSelectedDate(List<Event> event){
-
+  void addEvent(Event event){
+    _events.add(event);
+    notifyListeners();
   }
 }
 
