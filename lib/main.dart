@@ -1,6 +1,4 @@
-import 'package:android_proj/Pages/login.dart';
 import 'package:flutter/material.dart';
-import 'Pages/home_page.dart';
 import 'calender_widget.dart';
 import 'add_interview.dart';
 import 'package:provider/provider.dart';
