@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -27,10 +29,22 @@ class ParticipantProvider extends ChangeNotifier{
   final List<Event> _events = [];
 
   List<Event> get events => _events;
+  DateTime _selectedDate = DateTime.now();
+  DateTime get selectedDate => _selectedDate;
+  void setDate(DateTime date) => _selectedDate = date;
 
   void NewParticipant(Event event){
     _events.add(event);
     notifyListeners();
+  }
+
+  void deleteEvent(Event event){
+    _events.remove(event);
+    notifyListeners();
+  }
+
+  List<Event> eventOfSelectedDate(List<Event> event){
+
   }
 }
 
