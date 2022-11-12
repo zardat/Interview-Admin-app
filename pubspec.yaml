@@ -50,6 +50,10 @@ dev_dependencies:
   provider: any
   syncfusion_flutter_calendar: any
   intl: any
+  validators: any
+  firebase_core: any
+  firebase_database: any
+  parse_server_sdk_flutter: ^latest_version
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

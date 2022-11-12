@@ -3,30 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 // import 'dart:ffi';
+import 'event.dart';
+import 'package:validators/validators.dart' as validator;
 
-class Event{
 
-  final int count;
-  final String participant;
-  // final String participant2;
-  // final List<String> part = [];
-  final DateTime start;
-  final DateTime end;
-  final Color backgroundcolor;
-
-  Event({
-    this.count = 0,
-    required this.participant,
-    // this.participant2 ='' ,
-    required this.start,
-    required this.end,
-    this.backgroundcolor = Colors.green,
-  });
-}
 
 class ParticipantProvider extends ChangeNotifier{
   final List<Event> _events = [];
-
   List<Event> get events => _events;
   DateTime _selectedDate = DateTime.now();
   DateTime get selectedDate => _selectedDate;
@@ -43,8 +26,9 @@ class ParticipantProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void addEvent(Event event){
-    _events.add(event);
+  void editEvent(Event newevent,Event oldevent){
+    final index = _events.indexOf(oldevent);
+    _events[index] = newevent;
     notifyListeners();
   }
 }
@@ -52,7 +36,7 @@ class ParticipantProvider extends ChangeNotifier{
 
 class AddInterview extends StatefulWidget{
   final Event? event;
-  AddInterview({
+  const AddInterview({
     Key? key,
     this.event,
   }) : super(key: key);
@@ -62,10 +46,11 @@ class AddInterview extends StatefulWidget{
 }
 
 class _EditInterview extends State<AddInterview>{
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final participantController = TextEditingController();
   late DateTime start;
   late DateTime end;
+  late String email;
 
   @override
   void initState(){
@@ -74,6 +59,12 @@ class _EditInterview extends State<AddInterview>{
     if(widget.event == null){
       start = DateTime.now();
       end = DateTime.now().add(Duration(hours:1));
+    }
+    else{
+      final event = widget.event!;
+      participantController.text = event.participant;
+      start = event.start;
+      end = event.end;
     }
   }
   @override
@@ -91,6 +82,7 @@ class _EditInterview extends State<AddInterview>{
     body:SingleChildScrollView(
       padding: EdgeInsets.all(12),
       child: Form(
+        key: _formKey,
         child:Column(
         mainAxisSize:MainAxisSize.min ,
         children: <Widget>[
@@ -103,34 +95,27 @@ class _EditInterview extends State<AddInterview>{
     ),
   );
 
-  List<Widget> EditAction() => [
+  List<Widget> EditAction() =>[
     ElevatedButton.icon(
+        onPressed: saveForm,
+        icon: Icon(Icons.done),
+        label: Text('Save'),
       style: ElevatedButton.styleFrom(
         primary: Colors.white,
         shadowColor: Colors.transparent,
       ),
-      onPressed: saveForm,
-      icon: Icon(Icons.done),
-      label: Text('Save')
     ),
   ];
 
-  Widget AddParticipants() =>TextFormField(
+  Widget AddParticipants() => TextFormField(
             style: TextStyle(fontSize: 18),
             decoration: InputDecoration(
             border: UnderlineInputBorder(),
             hintText: 'Participant 1',
             ),
             onFieldSubmitted: (_) => saveForm(),
-            validator: (value){
-              if(value != null &&
-                  value.isEmpty){
-                return 'Enter Participants';
-              }
-              else{
-                return 'Parth';
-              }
-            },
+            validator: (value) =>
+                value != null && value.isEmpty ? 'Participant name cant be empty':null,
             controller: participantController,
             // TextFormField(
             //   style: TextStyle(fontSize: 18),
@@ -148,13 +133,12 @@ class _EditInterview extends State<AddInterview>{
             //   controller: participantController,
             // ),
         );
-    // );
 
   Future fromDateTime({required bool pickDate}) async{
     final date = await pickDateTime(start,pickDate: pickDate);
     if(date == null) return;
     if(date.isAfter(end)){
-      end = DateTime(date.year,date.day,date.day);
+      end = DateTime(date.year,date.day,date.day,end.hour,end.minute);
     }
     setState(() => start = date);
   }
@@ -266,7 +250,8 @@ class _EditInterview extends State<AddInterview>{
 
   Widget DropDown({
   required String text,
-  required VoidCallback onClicked}) =>
+  required VoidCallback onClicked
+  }) =>
       ListTile(
         title: Text(text),
         trailing: Icon(Icons.arrow_drop_down),
@@ -274,19 +259,26 @@ class _EditInterview extends State<AddInterview>{
       );
 
   Future saveForm() async{
-    final isValid = _formkey.currentState!.validate();
+    final isValid = _formKey.currentState!.validate();
+    // print(isValid);
     setState(() {
       if (isValid){
         final event = Event(participant: participantController.text, start: start, end: end);
+        // Navigator.of(context).pop();
 
-        final provider = Provider.of<ParticipantProvider>(context,listen: true);
-        provider.NewParticipant(event);
+        final isedit = widget.event != null;
+        final provider = Provider.of<ParticipantProvider>(context,listen: false);
 
-        Navigator.of(context).pop();
+        if(isedit){
+          provider.editEvent(event,widget.event!);
+          Navigator.of(context).pop();
+        }
+        else {
+          provider.NewParticipant(event);
+          Navigator.of(context).pop();
+        }
       }
     });
-
-
 
   }
 }

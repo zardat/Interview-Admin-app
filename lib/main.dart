@@ -40,8 +40,7 @@ class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) =>Scaffold(
       appBar : AppBar(
         title: Text(Myapp.title),
         centerTitle: true,
@@ -55,7 +54,7 @@ class MainPage extends StatelessWidget {
       ),
     );
   }
-}
+
 
 
 
